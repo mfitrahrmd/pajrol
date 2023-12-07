@@ -15,16 +15,20 @@ const authOptions: AuthOptions = {
       async authorize(credentials, req) {
         if (!credentials) return null
 
+        if (!credentials.email) throw new Error('email can not be empty')
+
+        if (!credentials.password) throw new Error('password can not be empty')
+
         const foundUser = await prisma.user.findUnique({
           where: {
             email: credentials.email,
           },
         })
 
-        if (!foundUser) return null
+        if (!foundUser) throw new Error('email not found')
 
         if (!(await bcrypt.compare(credentials.password, foundUser.password)))
-          return null
+          throw new Error('incorrect password')
 
         return foundUser
       },
