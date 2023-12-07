@@ -16,17 +16,19 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import * as yup from 'yup'
 
 export default function Form({ callbackUrl }: { callbackUrl: string }) {
-  const onSubmit: SubmitHandler<{ email: string; password: string }> =
-    async function ({ email, password }, e) {
-      const res = await signIn('credentials', {
-        redirect: false,
-        callbackUrl,
-        email,
-        password,
-      })
+  const onSubmit: SubmitHandler<FormData> = async function (
+    { email, password },
+    e,
+  ) {
+    const res = await signIn('credentials', {
+      redirect: false,
+      callbackUrl,
+      email,
+      password,
+    })
 
-      alert(res?.error)
-    }
+    alert(res?.error)
+  }
 
   const schema = yup.object({
     email: yup.string().required().email('invalid email'),
