@@ -1,6 +1,7 @@
 'use client'
 
 import Copyright from '@/app/_components/_server/Copyright'
+import { yupResolver } from '@hookform/resolvers/yup'
 import {
   Box,
   TextField,
@@ -11,42 +12,65 @@ import {
 } from '@mui/material'
 import Link from '@mui/material/Link'
 import { signIn } from 'next-auth/react'
-import React from 'react'
+import { useForm, SubmitHandler, Controller } from 'react-hook-form'
+import * as yup from 'yup'
 
-export default function Form() {
+export default function Form({ callbackUrl }: { callbackUrl: string }) {
+  const onSubmit: SubmitHandler<{ email: string; password: string }> =
+    async function ({ email, password }, e) {
+      const res = await signIn('credentials', {
+        redirect: false,
+        callbackUrl,
+        email,
+        password,
+      })
+
+      alert(res?.error)
+    }
+
+  const schema = yup.object({
+    email: yup.string().required().email('invalid email'),
+    password: yup.string().required(),
+  })
+  type FormData = yup.InferType<typeof schema>
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    mode: 'all',
+    resolver: yupResolver(schema),
+  })
   return (
     <>
       <Box
         component="form"
-        onSubmit={async (e) => {
-          e.preventDefault()
-        }}
+        onSubmit={handleSubmit(onSubmit)}
         noValidate
         sx={{ mt: 1 }}
       >
         <TextField
           margin="normal"
-          required
           fullWidth
           id="email"
           label="Email Address"
-          name="email"
           autoComplete="email"
           autoFocus
+          error={errors.email ? true : false}
+          helperText={errors.email?.message}
+          {...register('email')}
         />
         <TextField
           margin="normal"
-          required
           fullWidth
-          name="password"
+          id="password"
           label="Password"
           type="password"
-          id="password"
           autoComplete="current-password"
-        />
-        <FormControlLabel
-          control={<Checkbox value="remember" color="primary" />}
-          label="Remember me"
+          error={errors.password ? true : false}
+          helperText={errors.password?.message}
+          {...register('password')}
         />
         <Button
           type="submit"
