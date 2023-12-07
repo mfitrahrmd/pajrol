@@ -6,7 +6,8 @@ import bcrypt from 'bcrypt'
 const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
-      name: 'Credentials',
+      id: 'credentials',
+      name: 'credentials',
       credentials: {
         email: { label: 'email', type: 'email' },
         password: { label: 'password', type: 'password' },
@@ -29,6 +30,9 @@ const authOptions: AuthOptions = {
       },
     }),
   ],
+  session: {
+    strategy: 'jwt',
+  },
   pages: {
     signIn: '/signin',
   },
