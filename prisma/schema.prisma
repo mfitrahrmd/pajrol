@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Status {
+  PENDING
+  REJECTED
+  APPROVED
+  BORROWED
+  RETURNED
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  username String @unique
+  email    String @unique
+  password String
+  role     Role   @default(USER)
+
+  UserBorrowItem UserBorrowItem[]
+}
+
+model Item {
+  id          String @id @default(uuid())
+  name        String
+  description String
+  stock       Int
+
+  UserBorrowItem UserBorrowItem[]
+}
+
+model UserBorrowItem {
+  id        String                 @id @default(uuid())
+  count     Int
+  returnDue DateTime?
+  status    UserBorrowItemStatus[]
+
+  userId String
+  itemId String
+
+  user User @relation(fields: [userId], references: [id])
+  item Item @relation(fields: [itemId], references: [id])
+}
+
+model UserBorrowItemStatus {
+  id           String   @id
+  borrowStatus Status
+  message      String?
+  at           DateTime @default(now())
+
+  userBorrowItemId String
+
+  userBorrowItem UserBorrowItem @relation(fields: [userBorrowItemId], references: [id])
+
+  @@unique([borrowStatus, userBorrowItemId])
+}
