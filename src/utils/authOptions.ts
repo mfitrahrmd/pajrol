@@ -2,6 +2,7 @@ import { AuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import prisma from './prisma'
 import bcrypt from 'bcrypt'
+import { TErrorClient, TErrorServer } from '@/types/api'
 
 const authOptions: AuthOptions = {
   providers: [
@@ -13,11 +14,33 @@ const authOptions: AuthOptions = {
         password: { label: 'password', type: 'password' },
       },
       async authorize(credentials, req) {
-        if (!credentials) return null
+        if (!credentials)
+          throw new Error(
+            JSON.stringify({
+              errorType: 'server',
+              message: 'server is busy',
+            } as TErrorServer),
+          )
 
-        if (!credentials.email) throw new Error('email can not be empty')
+        if (!credentials.email)
+          throw new Error(
+            JSON.stringify({
+              errorType: 'client',
+              errors: {
+                email: ['email cn not be empty'],
+              },
+            } as TErrorClient),
+          )
 
-        if (!credentials.password) throw new Error('password can not be empty')
+        if (!credentials.password)
+          throw new Error(
+            JSON.stringify({
+              errorType: 'client',
+              errors: {
+                password: ['password can not be empty'],
+              },
+            } as TErrorClient),
+          )
 
         const foundUser = await prisma.user.findUnique({
           where: {
@@ -25,10 +48,25 @@ const authOptions: AuthOptions = {
           },
         })
 
-        if (!foundUser) throw new Error('email not found')
+        if (!foundUser)
+          throw new Error(
+            JSON.stringify({
+              errorType: 'client',
+              errors: {
+                email: ['email not found'],
+              },
+            } as TErrorClient),
+          )
 
         if (!(await bcrypt.compare(credentials.password, foundUser.password)))
-          throw new Error('incorrect password')
+          throw new Error(
+            JSON.stringify({
+              errorType: 'client',
+              errors: {
+                password: ['incorrect password'],
+              },
+            } as TErrorClient),
+          )
 
         return foundUser
       },
