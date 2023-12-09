@@ -19,6 +19,7 @@ enum Status {
   PENDING
   REJECTED
   APPROVED
+  CANCELLED
   BORROWED
   RETURNED
 }
@@ -45,7 +46,7 @@ model Item {
 
 model UserBorrowItem {
   id        String                 @id @default(uuid())
-  count     Int
+  amount    Int
   returnDue DateTime?
   status    UserBorrowItemStatus[]
 
@@ -57,7 +58,7 @@ model UserBorrowItem {
 }
 
 model UserBorrowItemStatus {
-  id           String   @id
+  id           String   @id @default(uuid())
   borrowStatus Status
   message      String?
   at           DateTime @default(now())
