@@ -131,6 +131,9 @@ export default function Form({ callbackUrl }: { callbackUrl: string }) {
         sx={{ mt: 1 }}
       >
         <TextField
+        onClick={() => {
+          console.log(errors.email?.types)
+        }}
           margin="normal"
           fullWidth
           id="email"
