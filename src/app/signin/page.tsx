@@ -7,7 +7,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
 import Form from './_client/Form'
 
-export default function SignInSide({
+export default function Page({
   searchParams,
 }: {
   params: Record<string, string>
@@ -58,7 +58,7 @@ export default function SignInSide({
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
-            <Form callbackUrl={searchParams.callbackUrl} />
+            <Form callbackUrl={searchParams.callbackUrl ?? '/'} />
           </Box>
         </Grid>
       </Grid>
