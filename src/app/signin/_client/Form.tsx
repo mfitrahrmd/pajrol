@@ -67,6 +67,7 @@ export default function Form({ callbackUrl }: { callbackUrl: string }) {
       r.push(callbackUrl)
     } catch (error) {
       const e = JSON.parse((error as Error).message)
+      console.log(e)
       if (e.errorType === 'server') {
         showAlert(e.message)
       } else if (e.errorType === 'client') {
