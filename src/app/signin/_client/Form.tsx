@@ -34,6 +34,7 @@ export default function Form({ callbackUrl }: { callbackUrl: string }) {
     formState: { errors },
   } = useForm<FormData>({
     mode: 'all',
+    criteriaMode: 'all',
     resolver: yupResolver(schema),
   })
 
