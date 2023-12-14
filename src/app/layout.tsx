@@ -1,7 +1,7 @@
 import ThemeRegistry from '@/mui/ThemeRegistry'
 import type { Metadata } from 'next'
+import MyAppBar from './_components/_client/MyAppBar'
 // import { Inter } from 'next/font/google'
-// import './globals.css'
 
 // const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       {/* <body className={inter.className}>{children}</body> */}
       <ThemeRegistry options={{ key: 'mui' }}>
-        <body>{children}</body>
+        <MyAppBar>{children}</MyAppBar>
       </ThemeRegistry>
     </html>
   )
